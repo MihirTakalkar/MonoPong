@@ -13,15 +13,14 @@ namespace MonoIntro
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Texture2D image;
-        Vector2 position;
-        Vector2 speed;
-        Color tint;
+        Ball ball;
 
         Texture2D mimage;
         Vector2 mposition;
         Vector2 mspeed;
         Color mtint;
+
+        Paddle leftpaddle;
 
 
         public Game1()
@@ -56,10 +55,9 @@ namespace MonoIntro
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            position = new Vector2(200, 200);
-            speed = new Vector2(4, 3);
-            tint = Color.White;
-            image = Content.Load<Texture2D>("ball");
+
+            ball = new Ball(Content.Load<Texture2D>("ball"),new Vector2 (400, 600),new Vector2 (7, 7), Color.White, new Vector2(1600, 900));
+            leftpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(0, 0), 6, Color.White, 900);
             mposition = new Vector2(0, 0);
             mspeed = new Vector2(0, 6);
             mtint = Color.White;
@@ -83,27 +81,14 @@ namespace MonoIntro
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState ks = Keyboard.GetState();
 
+            if (ks.IsKeyDown(Keys.S))
+            {
 
-            position += speed;
-
-            if (position.Y + image.Height > GraphicsDevice.Viewport.Height)
-            {
-                speed.Y = -Math.Abs(speed.Y);
             }
-
-            if(position.X + image.Width > GraphicsDevice.Viewport.Width)
-            {
-                speed.X = -Math.Abs(speed.X);
-            }
-            if(position.Y < 0)
-            {
-                speed.Y = Math.Abs(speed.Y);
-            }
-            if(position.X < 0)
-            {
-                speed.X = Math.Abs(speed.X);
-            }
+            ball.Update();
+         
             base.Update(gameTime);
         }
 
@@ -118,9 +103,9 @@ namespace MonoIntro
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
-            spriteBatch.Draw(image, position, tint);
+            ball.Draw(spriteBatch);
             spriteBatch.Draw(mimage, mposition, mtint);
-            
+
 
             spriteBatch.End();
             base.Draw(gameTime);
