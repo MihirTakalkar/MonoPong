@@ -15,12 +15,8 @@ namespace MonoIntro
 
         Ball ball;
 
-        Texture2D mimage;
-        Vector2 mposition;
-        Vector2 mspeed;
-        Color mtint;
-
         Paddle leftpaddle;
+        Paddle rightpaddle;
 
 
         public Game1()
@@ -55,13 +51,10 @@ namespace MonoIntro
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-
+            // GraphicsDevice.Viewport.Height
             ball = new Ball(Content.Load<Texture2D>("ball"),new Vector2 (400, 600),new Vector2 (7, 7), Color.White, new Vector2(1600, 900));
-            leftpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(0, 0), 6, Color.White, 900);
-            mposition = new Vector2(0, 0);
-            mspeed = new Vector2(0, 6);
-            mtint = Color.White;
-            mimage = Content.Load<Texture2D>("Paddle");
+            leftpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(0, 0), 6, Color.White);
+            rightpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(GraphicsDevice.Viewport.Width - leftpaddle.image.Width, 0),6,Color.White);
 
         }
 
@@ -85,11 +78,25 @@ namespace MonoIntro
 
             if (ks.IsKeyDown(Keys.S))
             {
-
+                leftpaddle.position.Y += 5;
+            }
+            if(ks.IsKeyDown(Keys.W))
+            {
+                leftpaddle.position.Y -= 5;
+            }
+            if (ks.IsKeyDown(Keys.Up))
+            {
+                rightpaddle.position.Y -= 5;
+            }
+            if (ks.IsKeyDown(Keys.Down))
+            {
+                rightpaddle.position.Y += 5;
             }
             ball.Update();
          
             base.Update(gameTime);
+            leftpaddle.Update(GraphicsDevice.Viewport.Height);
+            rightpaddle.Update(GraphicsDevice.Viewport.Height);
         }
 
         /// <summary>
@@ -104,7 +111,9 @@ namespace MonoIntro
             spriteBatch.Begin();
 
             ball.Draw(spriteBatch);
-            spriteBatch.Draw(mimage, mposition, mtint);
+
+            leftpaddle.Draw(spriteBatch);
+            rightpaddle.Draw(spriteBatch);
 
 
             spriteBatch.End();

@@ -10,25 +10,35 @@ namespace MonoIntro
 {
     class Paddle
     {
-        Texture2D image;
-        Vector2 position;
-        int maxHeight;
-        Color tint;
-        int speed;
+        public Texture2D image;
+        public Vector2 position;
+        public Color tint;
+        public int speed;
 
         //constructor (Image, postion, tint, speed)
-        public Paddle(Texture2D Image, Vector2 Position, int Speed, Color Tint, int MaxHeight)
+        public Paddle(Texture2D Image, Vector2 Position, int Speed, Color Tint)
         {
             image = Image;
             position = Position;
             speed = Speed;
             tint = Tint;
             speed = Speed;
-            maxHeight = MaxHeight;
         }
-        public void Update()
+        public void Update(int heightOfScreen)
         {
-    
+            if (position.Y < 0)
+            {
+                position = new Vector2(position.X, 0);
+            }
+
+            else if(position.Y + image.Height > heightOfScreen)
+            {
+                position = new Vector2(position.X, heightOfScreen- image.Height);
+            }
+        }
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(image, position, tint);
         }
     }
 }
