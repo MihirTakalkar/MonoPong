@@ -14,6 +14,9 @@ namespace MonoIntro
         public Vector2 position;
         public Color tint;
         public int speed;
+        Rectangle hitbox;
+
+        Texture2D depugPixel;  
 
         //constructor (Image, postion, tint, speed)
         public Paddle(Texture2D Image, Vector2 Position, int Speed, Color Tint)
@@ -23,6 +26,13 @@ namespace MonoIntro
             speed = Speed;
             tint = Tint;
             speed = Speed;
+            hitbox = new Rectangle((int)Position.X,(int)Position.Y,image.Width, image.Height);
+
+            if(depugPixel == null)
+            {
+                depugPixel = new Texture2D(image.GraphicsDevice, 1, 1);
+                depugPixel.SetData(new[] { Color.White });
+            }
         }
         public void Update(int heightOfScreen)
         {
@@ -35,10 +45,12 @@ namespace MonoIntro
             {
                 position = new Vector2(position.X, heightOfScreen- image.Height);
             }
+            hitbox = new Rectangle((int)position.X, (int)position.Y, image.Width, image.Height);
         }
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(image, position, tint);
+            spriteBatch.Draw(depugPixel, hitbox, Color.Green*0.5f);
         }
     }
 }
