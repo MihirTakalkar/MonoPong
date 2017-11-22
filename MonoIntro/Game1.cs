@@ -18,6 +18,10 @@ namespace MonoIntro
         Paddle leftpaddle;
         Paddle rightpaddle;
 
+        SpriteFont font;
+
+        bool drawScore;
+
 
         public Game1()
         {
@@ -52,9 +56,12 @@ namespace MonoIntro
 
             // TODO: use this.Content to load your game content here
             // GraphicsDevice.Viewport.Height
-            ball = new Ball(Content.Load<Texture2D>("ball"),new Vector2 (400, 600),new Vector2 (7, 7), Color.White, new Vector2(1600, 900));
-            leftpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(0, 0), 6, Color.White);
-            rightpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(GraphicsDevice.Viewport.Width - leftpaddle.image.Width, 0),6,Color.White);
+            font = Content.Load<SpriteFont>("font");
+            ball = new Ball(Content.Load<Texture2D>("apple"),new Vector2 (400, 600),new Vector2 (7, 7), Color.White, new Vector2(1600, 900));
+            leftpaddle = new Paddle(Content.Load<Texture2D>("samsungLeft"), new Vector2(0, 0), 6, Color.White);
+            rightpaddle = new Paddle(Content.Load<Texture2D>("samsungRight"), new Vector2(GraphicsDevice.Viewport.Width - leftpaddle.image.Width, 0),6,Color.White);
+
+            drawScore = false;
 
         }
 
@@ -97,25 +104,35 @@ namespace MonoIntro
             base.Update(gameTime);
             leftpaddle.Update(GraphicsDevice.Viewport.Height);
             rightpaddle.Update(GraphicsDevice.Viewport.Height);
-        }
 
+            if(leftpaddle.hitbox.Intersects(ball.hitbox))
+            {
+                ball.speed.X = Math.Abs(ball.speed.X);
+            }
+            
+            if(rightpaddle.hitbox.Intersects(ball.hitbox))
+            {
+                ball.speed.X = -Math.Abs(ball.speed.X);
+                drawScore = true;
+            }
+        }
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-
             ball.Draw(spriteBatch);
-
             leftpaddle.Draw(spriteBatch);
             rightpaddle.Draw(spriteBatch);
-
-
+            if (drawScore)
+            {
+                spriteBatch.DrawString(font, "Hello world!", new Vector2(1600/2, 900/2), Color.OrangeRed);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
