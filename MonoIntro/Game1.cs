@@ -20,8 +20,8 @@ namespace MonoIntro
 
         SpriteFont font;
 
-        bool drawScore;
-
+        public int score1;
+        public int score2;
 
         public Game1()
         {
@@ -57,11 +57,9 @@ namespace MonoIntro
             // TODO: use this.Content to load your game content here
             // GraphicsDevice.Viewport.Height
             font = Content.Load<SpriteFont>("font");
-            ball = new Ball(Content.Load<Texture2D>("apple"),new Vector2 (400, 600),new Vector2 (7, 7), Color.White, new Vector2(1600, 900));
-            leftpaddle = new Paddle(Content.Load<Texture2D>("samsungLeft"), new Vector2(0, 0), 6, Color.White);
-            rightpaddle = new Paddle(Content.Load<Texture2D>("samsungRight"), new Vector2(GraphicsDevice.Viewport.Width - leftpaddle.image.Width, 0),6,Color.White);
-
-            drawScore = false;
+            ball = new Ball(Content.Load<Texture2D>("apple"),new Vector2 (400, 600),new Vector2 (5, 5), Color.White, new Vector2(1600, 900));
+            leftpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(0, 0), 50, Color.White);
+            rightpaddle = new Paddle(Content.Load<Texture2D>("Paddle"), new Vector2(GraphicsDevice.Viewport.Width - leftpaddle.image.Width, 0),50,Color.White);
 
         }
 
@@ -99,7 +97,7 @@ namespace MonoIntro
             {
                 rightpaddle.position.Y += 5;
             }
-            ball.Update();
+            ball.Update(GraphicsDevice);
          
             base.Update(gameTime);
             leftpaddle.Update(GraphicsDevice.Viewport.Height);
@@ -113,8 +111,22 @@ namespace MonoIntro
             if(rightpaddle.hitbox.Intersects(ball.hitbox))
             {
                 ball.speed.X = -Math.Abs(ball.speed.X);
-                drawScore = true;
             }
+            if (ball.position.X + ball.image.Width > ball.bounds.X)
+            {
+                ball.speed.X = -Math.Abs(ball.speed.X);
+                ball.position.X = GraphicsDevice.Viewport.Width / 2 + 10;
+                ball.position.Y = GraphicsDevice.Viewport.Height / 2 + 10;
+                score1++;
+            }
+            if (ball.position.X < 0)
+            {
+                ball.speed.X = Math.Abs(ball.speed.X);
+                ball.position.X = GraphicsDevice.Viewport.Width / 2 + 10;
+                ball.position.Y = GraphicsDevice.Viewport.Height / 2 + 10;
+                score2++;
+            }
+      
         }
         /// <summary>
         /// This is called when the game should draw itself.
@@ -129,9 +141,18 @@ namespace MonoIntro
             ball.Draw(spriteBatch);
             leftpaddle.Draw(spriteBatch);
             rightpaddle.Draw(spriteBatch);
-            if (drawScore)
+         
+            spriteBatch.DrawString(font, $"Score:{score1}", new Vector2(10, 20), Color.Aquamarine);
+            spriteBatch.DrawString(font, $"Score:{score2}", new Vector2(GraphicsDevice.Viewport.Width - 80, 20), Color.Aquamarine);
+            if (score1 == 10)
             {
-                spriteBatch.DrawString(font, "Hello world!", new Vector2(1600/2, 900/2), Color.OrangeRed);
+                spriteBatch.DrawString(font, $"Left Paddle Wins, Right Paddle Loses!", new Vector2 (1600 / 2, 900 / 2), Color.OrangeRed);
+                Exit();
+            }
+            if (score2 == 10)
+            {
+                spriteBatch.DrawString(font, $"Right Paddle Wins, Left Paddle Loses!", new Vector2(1600 / 2, 900 / 2), Color.OrangeRed);
+                Exit();
             }
             spriteBatch.End();
             base.Draw(gameTime);
